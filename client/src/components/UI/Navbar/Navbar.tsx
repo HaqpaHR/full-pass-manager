@@ -4,11 +4,13 @@ import { logout } from "../../../reducers/userReducer";
 import { Box, Stack } from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
+import {reduxStore} from "../../../types";
+import {AppDispatch} from "../../../reducers";
 
 const Navbar = () => {
   const router = useNavigate();
-  const isAuth = useSelector((state: any) => state.user.isAuth);
-  const dispatch = useDispatch()
+  const isAuth = useSelector((state: reduxStore) => state.user.isAuth);
+  const dispatch = useDispatch<AppDispatch>()
 
   return (
     <div>

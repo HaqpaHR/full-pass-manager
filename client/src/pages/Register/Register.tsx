@@ -11,7 +11,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 import { registration } from "../../actions/user";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const theme = createTheme();
 

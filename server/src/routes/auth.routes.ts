@@ -1,10 +1,10 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import User from "../models/User";
 import bcrypt from "bcryptjs";
 import { check, validationResult } from "express-validator";
 import jwt from 'jsonwebtoken';
 import config from "config";
-import authMiddleware from '../middleware/auth.middleware';
+import authMiddleware, {IRequestWithAuth} from '../middleware/auth.middleware';
 
 const router = Router();
 
@@ -17,9 +17,8 @@ router.post(
       "Password must be longer than 3 and shorter than 15"
     ).isLength({ min: 3, max: 15 }),
   ],
-  async (req: any, res: any) => {
+  async (req: Request, res: Response) => {
     try {
-      console.log(req.body);
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "Uncorrected request", errors });
@@ -43,7 +42,7 @@ router.post(
   }
 );
 
-router.post("/login", async (req: any, res: any) => {
+router.post("/login", async (req: Request, res: Response) => {
   try {
       const {email, password} = req.body
       const user = await User.findOne({email})
@@ -56,8 +55,6 @@ router.post("/login", async (req: any, res: any) => {
 
       }
       const token = jwt.sign({id: user.id}, config.get("secretKey"), {expiresIn: "1h"})
-      console.log(token)
-      console.log(res.data)
       return res.json({
           token,
           user: {
@@ -71,7 +68,7 @@ router.post("/login", async (req: any, res: any) => {
   }
 });
 
-router.get("/auth", authMiddleware, async (req: any, res: any) => {
+router.get("/auth", authMiddleware, async (req: IRequestWithAuth, res: Response) => {
     try {
         const user = await User.findOne({_id: req.user.id})
         const token = jwt.sign({id: user!.id}, config.get("secretKey"), {expiresIn: "1h"})

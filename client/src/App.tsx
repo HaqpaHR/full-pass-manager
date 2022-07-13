@@ -4,17 +4,16 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import {Navigate, Route, Routes, useNavigate} from "react-router-dom";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
-import SignIn from "./pages/Login/Login";
 import { useDispatch, useSelector } from "react-redux";
 import { auth } from "./actions/user";
 import Navbar from "./components/UI/Navbar/Navbar";
+import {AppDispatch} from "./reducers";
 
 function App() {
   const isAuth = useSelector((state: any) => state.user.isAuth);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    // @ts-ignore
     dispatch(auth());
   }, []);
 
@@ -23,7 +22,7 @@ function App() {
       <Navbar />
       {!isAuth ? (
         <Routes>
-          <Route path="/login" element={<SignIn />}></Route>
+          <Route path="/login" element={<Login />}></Route>
           <Route path="/registration" element={<Register />}></Route>
           <Route
               path="*"

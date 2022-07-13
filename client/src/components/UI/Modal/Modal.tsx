@@ -4,7 +4,6 @@ import { styled, ThemeProvider } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
@@ -15,10 +14,16 @@ import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { createTheme } from "@mui/material";
-import {add, editPassword, getPasswords, registration} from "../../../actions/user";
-import {useDispatch, useSelector} from "react-redux";
+import { add, editPassword, getPasswords } from "../../../actions/password";
+import { useDispatch, useSelector } from "react-redux";
+import {reduxStore} from "../../../types";
+import {AppDispatch} from "../../../reducers";
+
+type PropsModal = {
+  title: string,
+  id?: string,
+}
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -61,34 +66,27 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
 
 const theme = createTheme();
 
-export default function CustomizedDialogs({title, id}:any) {
-  console.log(id)
+export default function CustomizedDialogs({ title, id }: PropsModal) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [open, setOpen] = React.useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const isVisible = showPassword ? "text" : "password";
-  const userId = useSelector((state: any) => state.user.currentUser.id);
+  const userId = useSelector((state: reduxStore) => state.user.currentUser.id);
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    handleClose()
+    handleClose();
   };
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const addPassWithGet = async () => {
-    if(title === "Edit") {
-      await editPassword(id, name, password)
-      // @ts-ignore
+    if (title === "Edit") {
+      await editPassword(id!, name, password);
       dispatch(getPasswords(userId))
     } else {
-      await add(name, password, userId)
-      // @ts-ignore
-      dispatch(getPasswords(userId))
+      await add(name, password, userId);
+      dispatch(getPasswords(userId));
     }
-    // console.log(id, name, password)
-    //   await editPassword(id, name, password)
-    //   // @ts-ignore
-    //   dispatch(getPasswords(userId))
-  }
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -138,12 +136,12 @@ export default function CustomizedDialogs({title, id}:any) {
                     margin="normal"
                     required
                     fullWidth
-                    id="email"
                     label="Name"
                     name="name"
-                    autoComplete="email"
                     autoFocus
-                    onChange={(e) => {setName(e.target.value)}}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                    }}
                   />
                   <TextField
                     margin="normal"
@@ -153,8 +151,9 @@ export default function CustomizedDialogs({title, id}:any) {
                     label="Password"
                     type={isVisible}
                     id="password"
-                    autoComplete="current-password"
-                    onChange={(e) => {setPassword(e.target.value)}}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
                   />
                   <FormControlLabel
                     control={

@@ -4,6 +4,9 @@ import userPasswordsReducer from "./userPasswordsReducer";
 import {composeWithDevTools} from "redux-devtools-extension";
 import thunk from "redux-thunk";
 
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch;
+
 const rootReducer = combineReducers({
     user: userReducer,
     passwords: userPasswordsReducer,

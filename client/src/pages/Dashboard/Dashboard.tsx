@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Container,
@@ -10,55 +10,32 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import CustomizedDialogs from "../../components/UI/Modal/Modal";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  add,
-  auth,
-  deletePasswords,
-  getPasswords,
-  login,
-} from "../../actions/user";
-import { logout } from "../../reducers/userReducer";
-import Navbar from "../../components/UI/Navbar/Navbar";
+import { deletePasswords, getPasswords } from "../../actions/password";
+import {IPassword, reduxStore} from "../../types";
 
-const passwords = [
-  {
-    number: 1,
-    name: "email",
-    password: "123123",
-  },
-  {
-    number: 2,
-    name: "staff",
-    password: "123123",
-  },
-];
+import Password from "../../components/Password/Password";
+import {AppDispatch} from "../../reducers";
 
 const Dashboard = () => {
-  const dispatch = useDispatch();
-  const currentUserInfo = useSelector((state) => state);
-  // @ts-ignore
+  const dispatch = useDispatch<AppDispatch>();
+  const currentUserInfo = useSelector((state: reduxStore) => state);
   const { user, passwords } = currentUserInfo;
   const isAuth = user.isAuth;
   const userId = user.currentUser.id;
   const arrOfPasswords = passwords.data;
   const userName = user.currentUser.email;
+
   const deletePass = async (id: string) => {
     await deletePasswords(id);
-    // @ts-ignore
     dispatch(getPasswords(userId));
   };
 
   useEffect(() => {
-    // @ts-ignore
     dispatch(getPasswords(userId));
   }, []);
 
@@ -114,7 +91,7 @@ const Dashboard = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {arrOfPasswords.map((pass: any, index: number) => (
+                {arrOfPasswords.map((pass: IPassword, index: number) => (
                   <TableRow
                     key={pass._id}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -126,15 +103,10 @@ const Dashboard = () => {
                       {pass.name}
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {pass.password}
+                      <Password password={pass.password} />
                     </TableCell>
-                    <TableCell component="th" scope="row">
-                      <FormControlLabel
-                        control={<Checkbox value="remember" color="primary" />}
-                        label="Show Password"
-                      />
-                    </TableCell>
-                    <TableCell>
+                    <TableCell></TableCell>
+                    <TableCell align="center">
                       <Stack direction="row" spacing={2}>
                         <CustomizedDialogs title="Edit" id={pass._id} />
                         <Button

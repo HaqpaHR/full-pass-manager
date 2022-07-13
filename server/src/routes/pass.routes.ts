@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import Passwords from "../models/Passwords";
 import authMiddleware from "../middleware/auth.middleware";
 import { check, validationResult } from "express-validator";
@@ -11,10 +11,9 @@ import passwords from "../models/Passwords";
 
 const router = Router();
 
-router.post("/add", async (req: any, res: any) => {
+router.post("/add", async (req: Request, res: Response) => {
   try {
     const {name, password, id} = req.body
-    // console.log(name, password, id)
 
     const pass = await new Passwords({name, user: id, password})
 
@@ -27,9 +26,10 @@ router.post("/add", async (req: any, res: any) => {
   }
 });
 
-router.get("/", authMiddleware, async (req: any, res: any) => {
+router.get("/", authMiddleware, async (req: Request, res: Response) => {
+
   try {
-    const passwords = await Passwords.find({user: req.user.id})
+    const passwords = await Passwords.find({user: req.query.userId})
     return res.json(passwords)
   } catch (e) {
     console.log(e);
@@ -37,7 +37,7 @@ router.get("/", authMiddleware, async (req: any, res: any) => {
   }
 });
 
-router.delete("/delete", authMiddleware, async (req: any, res: any) => {
+router.delete("/delete", authMiddleware, async (req: Request, res: Response) => {
   try {
     const password = await Passwords.findOneAndDelete({_id: req.query[0]})
     return res.json(password)
@@ -47,11 +47,9 @@ router.delete("/delete", authMiddleware, async (req: any, res: any) => {
   }
 });
 
-router.post("/edit", authMiddleware, async (req: any, res: any) => {
+router.post("/edit", authMiddleware, async (req: Request, res: Response) => {
   try {
-    console.log(req.body)
     const passwords = await Passwords.findOneAndUpdate({_id: req.body.id}, {name: req.body.name, password: req.body.password})
-    console.log(passwords)
     return res.json(passwords)
   } catch (e) {
     console.log(e);
